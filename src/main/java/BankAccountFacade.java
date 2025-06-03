@@ -2,21 +2,21 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.Currency;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class BankAccountFacade {
 
-    public static final AtomicLong ATOMIC_LONG = new AtomicLong();
     private final Clock clock;
     private final WithdrawalService withdrawalService;
     private final DepositService depositService;
     private final BankEventRepository bankEventRepository;
+    private final BankEventFactory factory;
 
     public BankAccountFacade() {
         this.clock = Clock.systemDefaultZone();
         this.bankEventRepository = new BankEventRepositoryImpl();
-        this.withdrawalService = new WithdrawalServiceImpl(this.clock, this.bankEventRepository);
-        this.depositService = new DepositServiceImpl(this.clock, this.bankEventRepository);
+        this.factory = new BankEventFactory();
+        this.withdrawalService = new WithdrawalServiceImpl(this.clock, this.bankEventRepository, factory);
+        this.depositService = new DepositServiceImpl(this.clock, this.bankEventRepository, factory);
     }
 
     public void deposit(int clientId, BigDecimal money, Currency currency) {
@@ -36,7 +36,7 @@ public class BankAccountFacade {
     }
 
     public void openAccount(int clientId, Currency currency) {
-        this.bankEventRepository.addEvent(new BankEvent(ATOMIC_LONG.getAndIncrement(), clientId, this.clock.instant(), new BigDecimal(0),
+        this.bankEventRepository.addEvent(this.factory.createBankEvent(clientId, this.clock.instant(), new BigDecimal(0),
                 new BigDecimal(0), currency, BankEventType.OPEN_ACCOUNT), clientId);
     }
 }

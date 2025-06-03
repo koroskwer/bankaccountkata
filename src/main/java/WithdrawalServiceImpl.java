@@ -6,10 +6,12 @@ public class WithdrawalServiceImpl implements WithdrawalService {
 
     private final BankEventRepository repository;
     private final Clock clock;
+    private final BankEventFactory bankEventFactory;
 
-    public WithdrawalServiceImpl(Clock clock, BankEventRepository bankEventRepository) {
+    public WithdrawalServiceImpl(Clock clock, BankEventRepository bankEventRepository, BankEventFactory bankEventFactory) {
         this.clock = clock;
         this.repository = bankEventRepository;
+        this.bankEventFactory = bankEventFactory;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
 
         BigDecimal newBalance = currentState.balance().subtract(money);
 
-        BankEvent event = new BankEvent(BankAccountFacade.ATOMIC_LONG.getAndIncrement(), clientId, this.clock.instant(), money, newBalance, currency, BankEventType.WITHDRAWAL);
+        BankEvent event = this.bankEventFactory.createBankEvent(clientId, this.clock.instant(), money, newBalance, currency, BankEventType.WITHDRAWAL);
         this.repository.addEvent(event, clientId);
     }
 }

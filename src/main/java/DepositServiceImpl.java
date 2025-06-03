@@ -6,10 +6,12 @@ public class DepositServiceImpl implements DepositService {
 
     private final BankEventRepository repository;
     private final Clock clock;
+    private final BankEventFactory bankEventFactory;
 
-    public DepositServiceImpl(Clock clock, BankEventRepository bankEventRepository) {
+    public DepositServiceImpl(Clock clock, BankEventRepository bankEventRepository, BankEventFactory bankEventFactory) {
         this.clock = clock;
         this.repository = bankEventRepository;
+        this.bankEventFactory = bankEventFactory;
     }
 
     @Override
@@ -22,7 +24,7 @@ public class DepositServiceImpl implements DepositService {
 
         BigDecimal newBalance = currentState.balance().add(money);
 
-        BankEvent event = new BankEvent(BankAccountFacade.ATOMIC_LONG.getAndIncrement(), clientId, this.clock.instant(), money, newBalance, currency, BankEventType.DEPOSIT);
+        BankEvent event = this.bankEventFactory.createBankEvent(clientId, this.clock.instant(), money, newBalance, currency, BankEventType.DEPOSIT);
         this.repository.addEvent(event, clientId);
     }
 }

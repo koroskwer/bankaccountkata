@@ -11,7 +11,6 @@ public class BankAccountFacadeTest {
     private static final Currency SAMPLE_CURRENCY = Currency.getInstance(Locale.US);
     private static final Currency CURRENCY_FOR_MISMATCH = Currency.getInstance(Locale.JAPAN);
 
-
     @Test
     public void checkIfDepositIsRegistered() {
         // given
