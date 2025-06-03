@@ -46,10 +46,8 @@ public class BankAccountFacadeTest {
         Assertions.assertThrows(CurrencyMismatchException.class, () -> testedFacade.withdraw(CLIENT_ID, new BigDecimal(100), CURRENCY_FOR_MISMATCH));
     }
 
-    //this test has a weird bug sadly, no idea what's going on - related to concurrency i'd assume
-    /*
     @Test
-    public void checkIfWithdrawalIsRegistered() {
+    public void checkIfWithdrawalIsRegistered() throws InterruptedException {
         // given
         BankAccountFacade testedFacade = new BankAccountFacade();
         testedFacade.openAccount(CLIENT_ID, SAMPLE_CURRENCY);
@@ -62,5 +60,4 @@ public class BankAccountFacadeTest {
         Assertions.assertEquals(3, testedFacade.getOperationsHistory(CLIENT_ID).size());
         Assertions.assertEquals(new BigDecimal(500), testedFacade.getCurrentBalance(CLIENT_ID));
     }
-     */
 }

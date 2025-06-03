@@ -2,9 +2,11 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.Currency;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class BankAccountFacade {
 
+    public static final AtomicLong ATOMIC_LONG = new AtomicLong();
     private final Clock clock;
     private final WithdrawalService withdrawalService;
     private final DepositService depositService;
@@ -34,8 +36,7 @@ public class BankAccountFacade {
     }
 
     public void openAccount(int clientId, Currency currency) {
-        System.out.println("openaccount date:"+this.clock.instant());
-        this.bankEventRepository.addEvent(new BankEvent(clientId, this.clock.instant(), new BigDecimal(0),
+        this.bankEventRepository.addEvent(new BankEvent(ATOMIC_LONG.getAndIncrement(), clientId, this.clock.instant(), new BigDecimal(0),
                 new BigDecimal(0), currency, BankEventType.OPEN_ACCOUNT), clientId);
     }
 }

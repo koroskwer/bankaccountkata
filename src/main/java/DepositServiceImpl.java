@@ -22,8 +22,7 @@ public class DepositServiceImpl implements DepositService {
 
         BigDecimal newBalance = currentState.balance().add(money);
 
-        System.out.println("deposit date:"+this.clock.instant());
-        BankEvent event = new BankEvent(clientId, this.clock.instant(), money, newBalance, currency, BankEventType.DEPOSIT);
+        BankEvent event = new BankEvent(BankAccountFacade.ATOMIC_LONG.getAndIncrement(), clientId, this.clock.instant(), money, newBalance, currency, BankEventType.DEPOSIT);
         this.repository.addEvent(event, clientId);
     }
 }
